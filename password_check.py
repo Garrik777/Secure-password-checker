@@ -17,6 +17,7 @@ def filterbyvalue(seq, value):
         if el[0] == value:
             yield el[1]
 
+
 def request_api_data(part_hash):
     '''
     Requests hashes tails from url
@@ -29,6 +30,7 @@ def request_api_data(part_hash):
     if res.status_code != 200:
         raise RuntimeError(f'Error resolving adress {url}')
     return res
+
 
 def get_pwd_leaks_count(hashes, hash_to_check):
     '''
@@ -43,6 +45,7 @@ def get_pwd_leaks_count(hashes, hash_to_check):
         return res[0]
     return 0
 
+
 def password_chk(password):
     '''
     Hashes password by SHA1 algorithm
@@ -54,6 +57,7 @@ def password_chk(password):
     first5_char, tail = sha1password[:5], sha1password[5:]
     response = request_api_data(first5_char)
     return get_pwd_leaks_count(response, tail)
+
 
 def get_passwords_from_txt(txt_file):
     '''
@@ -71,7 +75,8 @@ def get_passwords_from_txt(txt_file):
             ls.append(password)
     return ls
 
-def get_passwords_from_csv(csv_file, pwd_row_name = 'password'):
+
+def get_passwords_from_csv(csv_file, pwd_row_name='password'):
     '''
     :param csv_file: Path object - path to csv file
     :return: list - list of passwords from txt file
@@ -83,16 +88,16 @@ def get_passwords_from_csv(csv_file, pwd_row_name = 'password'):
 
     with csv_file.open('r', newline='') as csvfile:
 
-       reader = csv.DictReader(csvfile) #using DictReader to automatically deal with header row
+        reader = csv.DictReader(csvfile)  # using DictReader to automatically deal with header row
 
-       if pwd_row_name not in reader.fieldnames:
-           raise NameError(f'No such column is csv file \'{pwd_row_name}\'')
+        if pwd_row_name not in reader.fieldnames:
+            raise NameError(f'No such column is csv file \'{pwd_row_name}\'')
 
-
-       for row in reader:
+        for row in reader:
             ls.append(row[pwd_row_name])
 
     return ls
+
 
 def get_passwords_from_xls(xls_file):
     '''
@@ -101,11 +106,22 @@ def get_passwords_from_xls(xls_file):
     :return:
     '''
 
-    spec = importlib.util.find_spec('openpyxl') #checks for istalled module 'openpyxl'
+    spec = importlib.util.find_spec('openpyxl')  # checks for istalled module 'openpyxl'
     if spec is None:
-        raise ImportError(f'Module \'openpyxl\' is not installed')
+        raise ImportError(f'Module \'openpyxl\' is not installed. You can isntall it using command \'pip install '
+                          f'openpyxl\'')
     else:
         spec.loader.exec_module('openpyxl')
+
+    workbook = load_workbook(filename=xls_file, read_only=True, data_only=True)
+    sheet = workbook.active
+    for row in sheet.iter_rows():
+        for col in sheet.iter_cols():
+            cell = workbook.cell(row, col).value
+            if cell:
+                ls = []
+
+    return ls
 
 
 def main(args):
@@ -136,11 +152,11 @@ if __name__ == '__main__':
         passwd_list = get_passwords_from_txt(txt_file)
     elif file_extension == '.csv':
         csv_file = Path(cmd_params[0])
-        if len(cmd_params)>1:
-           passwd_list = get_passwords_from_csv(csv_file, cmd_params[1])
+        if len(cmd_params) > 1:
+            passwd_list = get_passwords_from_csv(csv_file, cmd_params[1])
         else:
             passwd_list = get_passwords_from_csv(csv_file)
-    elif file_extension =='.xls' or file_extension == 'xlsx':
+    elif file_extension == '.xls' or file_extension == 'xlsx':
         xls_file = Path(cmd_params[0])
         passwd_list = get_passwords_from_xls(xls_file)
     else:
