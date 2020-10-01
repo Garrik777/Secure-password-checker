@@ -77,7 +77,6 @@ def get_passwords_from_txt(txt_file):
 
 def get_passwords_from_csv(csv_file, pwd_row_name = 'password'):
     '''
-    TODO
     :param csv_file: Path object - path to csv file
     :return: list - list of passwords from txt file
     '''
@@ -89,6 +88,11 @@ def get_passwords_from_csv(csv_file, pwd_row_name = 'password'):
     with csv_file.open('r', newline='') as csvfile:
 
        reader = csv.DictReader(csvfile) #using DictReader to automatically deal with header row
+
+       if pwd_row_name not in reader.fieldnames:
+           raise NameError(f'No such column is csv file \'{pwd_row_name}\'')
+
+
        for row in reader:
             ls.append(row[pwd_row_name])
 
@@ -119,6 +123,7 @@ if __name__ == '__main__':
     # cmd_params = ['123', '667895','sgaad5784484&^%%$']
     # cmd_params = ['./test_files/passwords.txt']
     # cmd_params = ['./test_files/passwords.csv']
+
     cmd_params = sys.argv[1:]
     # print(cmd_params)
 
@@ -129,8 +134,10 @@ if __name__ == '__main__':
         passwd_list = get_passwords_from_txt(txt_file)
     elif file_extension == '.csv':
         csv_file = Path(cmd_params[0])
-        #TODO: add password column name passing check
-        passwd_list = get_passwords_from_csv(csv_file)
+        if len(cmd_params)>1:
+           passwd_list = get_passwords_from_csv(csv_file, cmd_params[1])
+        else:
+            passwd_list = get_passwords_from_csv(csv_file)
     elif file_extension =='.xls' or file_extension == '.xlsx':
         xls_file = Path(cmd_params[0])
         passwd_list = get_passwords_from_xls(xls_file)
