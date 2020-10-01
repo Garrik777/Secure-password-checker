@@ -59,11 +59,19 @@ def password_chk(password):
 
 def get_passwords_from_txt(txt_file):
     '''
-    TODO
     :param txt_file: Path object - path to txt file
-    :return:
+    :return:list - list of passwords from txt file
     '''
-    pass
+
+    if not txt_file.is_file():
+        return []
+
+    ls = []
+
+    with txt_file.open('r') as f:
+        for password in f.readlines():
+            ls.append(password)
+    return ls
 
 
 def get_passwords_from_csv(csv_file):
@@ -106,10 +114,10 @@ if __name__ == '__main__':
     if file_extension == '.txt':
         txt_file = Path(cmd_params[0])
         passwd_list = get_passwords_from_txt(txt_file)
-    elif file_extension = '.csv':
+    elif file_extension == '.csv':
         csv_file = Path(cmd_params[0])
         passwd_list = get_passwords_from_csv(csv_file)
-    elif file_extension = '.xls' or file_extension = '.xlsx':
+    elif file_extension =='.xls' or file_extension == '.xlsx':
         xls_file = Path(cmd_params[0])
         passwd_list = get_passwords_from_xls(xls_file)
     else:
