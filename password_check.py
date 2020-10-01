@@ -2,11 +2,9 @@ import requests
 import hashlib
 import sys
 
-
-
 def filterbyvalue(seq, value):
    '''
-   Hash filteg generator
+   Finds hash tail in url responce text
    :param seq:
    :param value:
    :return:
@@ -18,8 +16,8 @@ def filterbyvalue(seq, value):
 def request_api_data(part_hash):
     '''
     Requests hashes tails from url
-    :param part_hash: string - first 5 characters of hash
-    :return:
+    :param part_hash: str - first 5 characters of hash
+    :return: responce - url responce object
     '''
 
     url = 'https://api.pwnedpasswords.com/range/' + part_hash
@@ -29,6 +27,12 @@ def request_api_data(part_hash):
     return res
 
 def get_pwd_leaks_count(hashes, hash_to_check):
+    '''
+
+    :param hashes: url responce object
+    :param hash_to_check: hash tail
+    :return:list - contains number of password usages
+    '''
     hashes = (line.split(':') for line in hashes.text.splitlines())
     res = [i for i in filterbyvalue(hashes, hash_to_check)]
     if len(res):
@@ -39,7 +43,7 @@ def password_chk(password):
     '''
     Hashes password by SHA1 algorithm
     :param password: string
-    :return:
+    :return: int - number of checked password usages
     '''
 
     sha1password = hashlib.sha1(password.encode('utf-8')).hexdigest().upper()
@@ -55,6 +59,8 @@ def main(args):
         else:
             print(f'{passw} is strong enough')
 
-if __name__ = '__main__':
-    main(sys.argv[1:])
+if __name__ == '__main__':
+    main(['123'])
+
+    # main(sys.argv[1:])
    # sys.exit(main(sys.argv[1:])) - принудительный выход если что-то пошло не так и зависло
