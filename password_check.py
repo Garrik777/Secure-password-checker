@@ -3,6 +3,7 @@ import hashlib
 from pathlib import Path
 import csv
 import sys
+import importlib.util
 
 
 def filterbyvalue(seq, value):
@@ -15,7 +16,6 @@ def filterbyvalue(seq, value):
     for el in seq:
         if el[0] == value:
             yield el[1]
-
 
 def request_api_data(part_hash):
     '''
@@ -30,7 +30,6 @@ def request_api_data(part_hash):
         raise RuntimeError(f'Error resolving adress {url}')
     return res
 
-
 def get_pwd_leaks_count(hashes, hash_to_check):
     '''
 
@@ -44,7 +43,6 @@ def get_pwd_leaks_count(hashes, hash_to_check):
         return res[0]
     return 0
 
-
 def password_chk(password):
     '''
     Hashes password by SHA1 algorithm
@@ -56,7 +54,6 @@ def password_chk(password):
     first5_char, tail = sha1password[:5], sha1password[5:]
     response = request_api_data(first5_char)
     return get_pwd_leaks_count(response, tail)
-
 
 def get_passwords_from_txt(txt_file):
     '''
@@ -73,7 +70,6 @@ def get_passwords_from_txt(txt_file):
         for password in f.readlines():
             ls.append(password)
     return ls
-
 
 def get_passwords_from_csv(csv_file, pwd_row_name = 'password'):
     '''
@@ -104,7 +100,12 @@ def get_passwords_from_xls(xls_file):
     :param xls_file: Path object - path to xls file
     :return:
     '''
-    pass
+
+    spec = importlib.util.find_spec('openpyxl') #checks for istalled module 'openpyxl'
+    if spec is None:
+        raise ImportError(f'Module \'openpyxl\' is not installed')
+    else:
+        spec.loader.exec_module('openpyxl')
 
 
 def main(args):
@@ -123,8 +124,9 @@ if __name__ == '__main__':
     # cmd_params = ['123', '667895','sgaad5784484&^%%$']
     # cmd_params = ['./test_files/passwords.txt']
     # cmd_params = ['./test_files/passwords.csv']
+    cmd_params = ['./test_files/passwords.xlsx']
 
-    cmd_params = sys.argv[1:]
+    # cmd_params = sys.argv[1:]
     # print(cmd_params)
 
     passwd_list = []
@@ -138,7 +140,7 @@ if __name__ == '__main__':
            passwd_list = get_passwords_from_csv(csv_file, cmd_params[1])
         else:
             passwd_list = get_passwords_from_csv(csv_file)
-    elif file_extension =='.xls' or file_extension == '.xlsx':
+    elif file_extension =='.xls' or file_extension == 'xlsx':
         xls_file = Path(cmd_params[0])
         passwd_list = get_passwords_from_xls(xls_file)
     else:
