@@ -101,7 +101,7 @@ def get_passwords_from_csv(csv_file, pwd_row_name='password'):
 
 def get_passwords_from_xls(xls_file):
     '''
-    TODO
+    TODO - check module load and excel reading
     :param xls_file: Path object - path to xls file
     :return:
     '''
@@ -111,9 +111,11 @@ def get_passwords_from_xls(xls_file):
         raise ImportError(f'Module \'openpyxl\' is not installed. You can isntall it using command \'pip install '
                           f'openpyxl\'')
     else:
-        spec.loader.exec_module('openpyxl')
+        module = importlib.util.module_from_spec(spec)
+        sys.modules['openpyxl'] = module
+        spec.loader.exec_module(module)
 
-    workbook = load_workbook(filename=xls_file, read_only=True, data_only=True)
+    workbook = module.load_workbook(filename=xls_file, read_only=True, data_only=True)
     sheet = workbook.active
     for row in sheet.iter_rows():
         for col in sheet.iter_cols():
