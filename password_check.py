@@ -1,17 +1,20 @@
 import requests
 import hashlib
+from pathlib import Path
 import sys
 
+
 def filterbyvalue(seq, value):
-   '''
-   Finds hash tail in url responce text
-   :param seq:
-   :param value:
-   :return:
-   '''
-   for el in seq:
-       if el[0]==value:
-           yield el[1]
+    '''
+    Finds hash tail in url responce text
+    :param seq:
+    :param value:
+    :return:
+    '''
+    for el in seq:
+        if el[0] == value:
+            yield el[1]
+
 
 def request_api_data(part_hash):
     '''
@@ -26,6 +29,7 @@ def request_api_data(part_hash):
         raise RuntimeError(f'Error resolving adress {url}')
     return res
 
+
 def get_pwd_leaks_count(hashes, hash_to_check):
     '''
 
@@ -39,6 +43,7 @@ def get_pwd_leaks_count(hashes, hash_to_check):
         return res[0]
     return 0
 
+
 def password_chk(password):
     '''
     Hashes password by SHA1 algorithm
@@ -51,6 +56,34 @@ def password_chk(password):
     response = request_api_data(first5_char)
     return get_pwd_leaks_count(response, tail)
 
+
+def get_passwords_from_txt(txt_file):
+    '''
+    TODO
+    :param txt_file: Path object - path to txt file
+    :return:
+    '''
+    pass
+
+
+def get_passwords_from_csv(csv_file):
+    '''
+    TODO
+    :param csv_file: Path object - path to csv file
+    :return:
+    '''
+    pass
+
+
+def get_passwords_from_xls(xls_file):
+    '''
+    TODO
+    :param xls_file: Path object - path to xls file
+    :return:
+    '''
+    pass
+
+
 def main(args):
     for passw in args:
         count = password_chk(passw)
@@ -59,8 +92,28 @@ def main(args):
         else:
             print(f'{passw} is strong enough')
 
+
 if __name__ == '__main__':
-    main(['123'])
 
     # main(sys.argv[1:])
-   # sys.exit(main(sys.argv[1:])) - принудительный выход если что-то пошло не так и зависло
+    # sys.exit(main(sys.argv[1:]))
+
+    # cmd_params = ['123', '667895','sgaad5784484&^%%$']
+    cmd_params = ['./test files/password.txt']
+
+    passwd_list = []
+    file_extension = cmd_params[0][-4:]
+    if file_extension == '.txt':
+        txt_file = Path(cmd_params[0])
+        passwd_list = get_passwords_from_txt(txt_file)
+    elif file_extension = '.csv':
+        csv_file = Path(cmd_params[0])
+        passwd_list = get_passwords_from_csv(csv_file)
+    elif file_extension = '.xls' or file_extension = '.xlsx':
+        xls_file = Path(cmd_params[0])
+        passwd_list = get_passwords_from_xls(xls_file)
+    else:
+        passwd_list = sys.argv[1:]
+
+    if len(passwd_list):
+        main(passwd_list)
