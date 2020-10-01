@@ -1,6 +1,7 @@
 import requests
 import hashlib
 from pathlib import Path
+import csv
 import sys
 
 
@@ -74,14 +75,24 @@ def get_passwords_from_txt(txt_file):
     return ls
 
 
-def get_passwords_from_csv(csv_file):
+def get_passwords_from_csv(csv_file, pwd_row_name = 'password'):
     '''
     TODO
     :param csv_file: Path object - path to csv file
-    :return:
+    :return: list - list of passwords from txt file
     '''
-    pass
+    if not csv_file.is_file():
+        return []
 
+    ls = []
+
+    with csv_file.open('r', newline='') as csvfile:
+
+       reader = csv.DictReader(csvfile) #using DictReader to automatically deal with header row
+       for row in reader:
+            ls.append(row[pwd_row_name])
+
+    return ls
 
 def get_passwords_from_xls(xls_file):
     '''
@@ -103,11 +114,13 @@ def main(args):
 
 if __name__ == '__main__':
 
-    # main(sys.argv[1:])
     # sys.exit(main(sys.argv[1:]))
 
     # cmd_params = ['123', '667895','sgaad5784484&^%%$']
-    cmd_params = ['./test files/password.txt']
+    # cmd_params = ['./test_files/passwords.txt']
+    # cmd_params = ['./test_files/passwords.csv']
+    cmd_params = sys.argv[1:]
+    # print(cmd_params)
 
     passwd_list = []
     file_extension = cmd_params[0][-4:]
@@ -116,6 +129,7 @@ if __name__ == '__main__':
         passwd_list = get_passwords_from_txt(txt_file)
     elif file_extension == '.csv':
         csv_file = Path(cmd_params[0])
+        #TODO: add password column name passing check
         passwd_list = get_passwords_from_csv(csv_file)
     elif file_extension =='.xls' or file_extension == '.xlsx':
         xls_file = Path(cmd_params[0])
