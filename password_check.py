@@ -42,8 +42,8 @@ def get_pwd_leaks_count(hashes, hash_to_check):
 def password_chk(password):
     '''
     Hashes password by SHA1 algorithm
-    :param password: string
-    :return: int - number of checked password usages
+    :param password: str
+    :return: list - number of checked password usages
     '''
 
     sha1password = hashlib.sha1(password.encode('utf-8')).hexdigest().upper()
