@@ -138,15 +138,11 @@ def main(args):
 
 if __name__ == '__main__':
 
-    # sys.exit(main(sys.argv[1:]))
+    cmd_params = sys.argv[1:]
 
-    # cmd_params = ['123', '667895','sgaad5784484&^%%$']
-    # cmd_params = ['./test_files/passwords.txt']
-    # cmd_params = ['./test_files/passwords.csv']
-    cmd_params = ['./test_files/passwords.xlsx']
-
-    # cmd_params = sys.argv[1:]
-    # print(cmd_params)
+    if len(sys.argv) < 2:
+        print(f'missing second parameter in input')
+        sys.exit()
 
     passwd_list = []
     file_extension = cmd_params[0][-4:]
