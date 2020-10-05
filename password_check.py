@@ -79,7 +79,7 @@ def get_passwords_from_txt(txt_file):
 def get_passwords_from_csv(csv_file, pwd_row_name='password'):
     '''
     :param csv_file: Path object - path to csv file
-    :return: list - list of passwords from txt file
+    :return: list - list of passwords from csv file
     '''
     if not csv_file.is_file():
         return []
@@ -103,8 +103,13 @@ def get_passwords_from_xls(xls_file):
     '''
     TODO - check module load and excel reading
     :param xls_file: Path object - path to xls file
-    :return:
+    :return:list - list of passwords from xls file
     '''
+
+    if not xls_file.is_file():
+        return []
+
+    ls = []
 
     spec = importlib.util.find_spec('openpyxl')  # checks for istalled module 'openpyxl'
     if spec is None:
@@ -116,13 +121,9 @@ def get_passwords_from_xls(xls_file):
         spec.loader.exec_module(module)
 
     workbook = module.load_workbook(filename=xls_file, read_only=True, data_only=True)
-    sheet = workbook.active
-    for row in sheet.iter_rows():
-        for col in sheet.iter_cols():
-            cell = workbook.cell(row, col).value
-            if cell:
-                ls = []
-
+    first_sheet = workbook.sheetnames[0]
+    sheet = workbook[first_sheet]
+    ls = [cell.value for row in sheet.rows for cell in row if cell.value]
     return ls
 
 
