@@ -6,24 +6,24 @@ import sys
 import importlib.util
 
 
-def filterbyvalue(seq, value):
-    '''
+def filterbyvalue(seq, value: str) -> int:
+    """
     Finds hash tail in url responce text
-    :param seq:
-    :param value:
-    :return:
-    '''
+    :param seq:iterable
+    :param value:str - hash head
+    :return:int - number of password usages
+    """
     for el in seq:
         if el[0] == value:
             yield el[1]
 
 
-def request_api_data(part_hash):
-    '''
-    Requests hashes tails from url
+def request_api_data(part_hash: str):
+    """
+    Requests hash tails from url
     :param part_hash: str - first 5 characters of hash
     :return: responce - url responce object
-    '''
+    """
 
     url = 'https://api.pwnedpasswords.com/range/' + part_hash
     res = requests.get(url)
@@ -32,13 +32,13 @@ def request_api_data(part_hash):
     return res
 
 
-def get_pwd_leaks_count(hashes, hash_to_check):
-    '''
-
+def get_pwd_leaks_count(hashes, hash_to_check: str) -> int:
+    """
+    calculates number of password usages
     :param hashes: url responce object
     :param hash_to_check: hash tail
-    :return:list - contains number of password usages
-    '''
+    :return:int - contains number of password usages
+    """
     hashes = (line.split(':') for line in hashes.text.splitlines())
     res = [i for i in filterbyvalue(hashes, hash_to_check)]
     if len(res):
@@ -46,12 +46,12 @@ def get_pwd_leaks_count(hashes, hash_to_check):
     return 0
 
 
-def password_chk(password):
-    '''
+def password_chk(password: str) -> int:
+    """
     Hashes password by SHA1 algorithm
     :param password: str
-    :return: list - number of checked password usages
-    '''
+    :return: int - number of checked password usages
+    """
 
     sha1password = hashlib.sha1(password.encode('utf-8')).hexdigest().upper()
     first5_char, tail = sha1password[:5], sha1password[5:]
@@ -59,11 +59,11 @@ def password_chk(password):
     return get_pwd_leaks_count(response, tail)
 
 
-def get_passwords_from_txt(txt_file):
-    '''
+def get_passwords_from_txt(txt_file: Path) -> list:
+    """
     :param txt_file: Path object - path to txt file
     :return:list - list of passwords from txt file
-    '''
+    """
 
     if not txt_file.is_file():
         return []
@@ -76,11 +76,11 @@ def get_passwords_from_txt(txt_file):
     return ls
 
 
-def get_passwords_from_csv(csv_file, pwd_row_name='password'):
-    '''
+def get_passwords_from_csv(csv_file: Path, pwd_row_name='password') -> list:
+    """
     :param csv_file: Path object - path to csv file
     :return: list - list of passwords from csv file
-    '''
+    """
     if not csv_file.is_file():
         return []
 
@@ -99,12 +99,12 @@ def get_passwords_from_csv(csv_file, pwd_row_name='password'):
     return ls
 
 
-def get_passwords_from_xls(xls_file):
-    '''
+def get_passwords_from_xls(xls_file: Path) -> list:
+    """
     TODO - check module load and excel reading
     :param xls_file: Path object - path to xls file
     :return:list - list of passwords from xls file
-    '''
+    """
 
     if not xls_file.is_file():
         return []
@@ -127,7 +127,7 @@ def get_passwords_from_xls(xls_file):
     return ls
 
 
-def main(args):
+def main(args: list):
     for passw in args:
         count = password_chk(passw)
         if count:
