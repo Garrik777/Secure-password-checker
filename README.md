@@ -5,7 +5,7 @@ Checks wherever your password have been hacked.
 Check executed by hashing password and passing part of the hash to https://api.pwnedpasswords.com
 In responce hash tails of compromised passwords return.<br>
 
-Paswwords can by passed to script by command line parametrs, text file, csv file or xls file<br>
+Passwords can by passed to script by command line parameters, text file, csv file or xls file<br>
 
 Text paramets example:<br>
 py password_check.py 123 fvkfmhgf 6778
