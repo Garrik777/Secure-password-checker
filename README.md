@@ -15,7 +15,7 @@ py password_check.py ./test_files/passwords.txt
 
 CSV file example:<br>
 py password_check.py ./test_files/passwords.csv <password_colum_name><br>
-optionally password_colum_name could be passed if there is many columns if file.
+optionally password_colum_name could be passed if there is many columns in file.
 By default password_colum_name = 'password'
 
 XLS file example:<br>
